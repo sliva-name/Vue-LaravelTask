@@ -24,9 +24,13 @@ class Article extends Model
     /**
      * Разрешённые для массового заполнения поля
      *
-     * @var string[]
+     * @var array<int, string>
      */
-    protected $fillable = ['title', 'content', 'author'];
+    protected $fillable = [
+        'title',
+        'content',
+        'author',
+    ];
 
     /**
      * Мутатор для поля author

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Comment;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\ValidationRule;
 
 /**
  * Валидация для создания комментария
@@ -23,7 +22,7 @@ class StoreRequest extends FormRequest
     /**
      * Правила валидации
      *
-     * @return array<string, ValidationRule|array|string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {

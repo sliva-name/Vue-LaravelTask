@@ -25,9 +25,13 @@ class Comment extends Model
     /**
      * Разрешённые для массового заполнения поля
      *
-     * @var string[]
+     * @var array<int, string>
      */
-    protected $fillable = ['article_id', 'author', 'text'];
+    protected $fillable = [
+        'article_id',
+        'author',
+        'text',
+    ];
 
     /**
      * Мутатор для поля author

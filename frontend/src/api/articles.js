@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:9000/api"
+const API_URL = "/api"
 
 
 export async function getArticles() {
@@ -51,9 +51,7 @@ export async function createComment(articleId, data) {
 }
 
 export async function deleteComment(commentId) {
-    const res = await fetch(`${API_URL}/comments/${commentId}`, {
-        method: "DELETE",
-    })
+    const res = await fetch(`${API_URL}/comments/${commentId}`, { method: "DELETE" })
     if (!res.ok) throw new Error("Ошибка удаления комментария")
     return true
 }
