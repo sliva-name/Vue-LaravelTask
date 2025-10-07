@@ -28,7 +28,7 @@ help:
 install:
 	@echo "$(GREEN)Установка зависимостей...$(RESET)"
 	@echo "$(YELLOW)Backend (Composer)...$(RESET)"
-	cd backend && composer install
+	docker-compose run --rm app composer install
 	@echo "$(YELLOW)Frontend (NPM)...$(RESET)"
 	cd frontend && npm install
 	@echo "$(GREEN)Зависимости установлены!$(RESET)"
@@ -38,8 +38,9 @@ start:
 	@echo "$(GREEN)Запуск проекта...$(RESET)"
 	docker-compose up -d
 	@echo "$(GREEN)Проект запущен!$(RESET)"
-	@echo "$(YELLOW)Frontend: http://localhost:3000$(RESET)"
-	@echo "$(YELLOW)Backend API: http://localhost:8000/api$(RESET)"
+	@echo "$(YELLOW)Frontend: http://localhost:5173$(RESET)"
+	@echo "$(YELLOW)Backend API: http://localhost:5173/api$(RESET)"
+	@echo "$(YELLOW)Direct Nuxt: http://localhost:3000$(RESET)"
 
 # Остановка проекта
 stop:
@@ -66,19 +67,19 @@ frontend:
 # Выполнение миграций
 migrate:
 	@echo "$(GREEN)Выполнение миграций...$(RESET)"
-	cd backend && php artisan migrate
+	docker-compose exec app php artisan migrate
 	@echo "$(GREEN)Миграции выполнены!$(RESET)"
 
 # Заполнение БД тестовыми данными
 seed:
 	@echo "$(GREEN)Заполнение БД тестовыми данными...$(RESET)"
-	cd backend && php artisan db:seed
+	docker-compose exec app php artisan db:seed
 	@echo "$(GREEN)БД заполнена!$(RESET)"
 
 # Сброс и пересоздание БД
 fresh:
 	@echo "$(YELLOW)Сброс и пересоздание БД...$(RESET)"
-	cd backend && php artisan migrate:fresh --seed
+	docker-compose exec app php artisan migrate:fresh --seed
 	@echo "$(GREEN)БД пересоздана!$(RESET)"
 
 # Запуск всех тестов
@@ -116,7 +117,7 @@ clean:
 # Вход в контейнер backend
 shell:
 	@echo "$(GREEN)Вход в backend контейнер...$(RESET)"
-	docker-compose exec backend bash
+	docker-compose exec app bash
 
 # Установка и запуск (полная настройка)
 setup: install
@@ -139,6 +140,14 @@ status:
 
 # Быстрый перезапуск
 restart: stop start
+
+# Полный старт с миграциями
+start-full: start
+	@echo "$(YELLOW)Выполнение миграций...$(RESET)"
+	@sleep 10
+	docker-compose exec app php artisan migrate --force
+	docker-compose exec app php artisan db:seed --force
+	@echo "$(GREEN)Проект полностью готов!$(RESET)"
 
 # Разработческий режим (без Docker)
 dev:
