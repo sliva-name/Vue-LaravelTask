@@ -10,15 +10,23 @@ dist
 node_modules
 
 # Logs
-logs
-*.log
+*.log*
 
 # Misc
 .DS_Store
 .fleet
-.idea
 
 # Local env files
 .env
 .env.*
 !.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

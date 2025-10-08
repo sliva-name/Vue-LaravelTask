@@ -9,16 +9,15 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Регистрирует сервисы.
      */
     public function register(): void
     {
-        $this->app->singleton(ArticleService::class);
-        $this->app->singleton(CommentService::class);
+        //
     }
 
     /**
-     * Bootstrap any application services.
+     * Загружает сервисы.
      */
     public function boot(): void
     {

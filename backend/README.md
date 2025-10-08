@@ -1,61 +1,171 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🔧 Tekstura Backend (Laravel API)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend API для проекта Tekstura на Laravel 12.
 
-## About Laravel
+## Особенности
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 12 с Sanctum аутентификацией
+- PostgreSQL база данных
+- API для статей и комментариев
+- Docker контейнеризация
+- Полное покрытие тестами
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Структура API
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Статьи
+- `GET /api/articles` - Список статей
+- `POST /api/articles` - Создание статьи
+- `GET /api/articles/{id}` - Получение статьи
+- `PUT /api/articles/{id}` - Обновление статьи
+- `DELETE /api/articles/{id}` - Удаление статьи
 
-## Learning Laravel
+### Комментарии
+- `GET /api/articles/{id}/comments` - Комментарии к статье
+- `POST /api/articles/{id}/comments` - Создание комментария
+- `PUT /api/comments/{id}` - Обновление комментария
+- `DELETE /api/comments/{id}` - Удаление комментария
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Быстрый старт
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1. Установка зависимостей
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+composer install
+```
 
-## Laravel Sponsors
+### 2. Настройка окружения
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-### Premium Partners
+### 3. Настройка базы данных
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+# В .env файле укажите настройки БД
+DB_CONNECTION=pgsql
+DB_HOST=postgres_db
+DB_PORT=5432
+DB_DATABASE=articles_db
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
 
-## Contributing
+### 4. Миграции и сиды
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-## Code of Conduct
+### 5. Запуск сервера
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan serve
+```
 
-## Security Vulnerabilities
+## Docker
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Сборка образа
 
-## License
+```bash
+docker build -t tekstura-backend:latest .
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Запуск в Docker
+
+```bash
+docker run -p 9000:9000 \
+  -e DB_HOST=postgres_db \
+  -e DB_PASSWORD=secret \
+  tekstura-backend:latest
+```
+
+## Тестирование
+
+```bash
+# Запуск всех тестов
+php artisan test
+
+# Запуск конкретного теста
+php artisan test --filter=ArticleApiTest
+
+# С покрытием кода
+php artisan test --coverage
+```
+
+## Разработка
+
+### Структура проекта
+
+```
+app/
+├── Http/
+│   ├── Controllers/     # API контроллеры
+│   ├── Requests/        # Валидация запросов
+│   └── Resources/       # API ресурсы
+├── Models/              # Eloquent модели
+└── Services/            # Бизнес-логика
+
+database/
+├── migrations/          # Миграции БД
+├── seeders/            # Сиды для тестовых данных
+└── factories/          # Фабрики для тестов
+
+tests/
+├── Feature/            # Интеграционные тесты
+└── Unit/               # Юнит тесты
+```
+
+### Добавление новой функциональности
+
+1. Создайте миграцию: `php artisan make:migration create_new_table`
+2. Создайте модель: `php artisan make:model NewModel`
+3. Создайте контроллер: `php artisan make:controller Api/NewController`
+4. Добавьте роуты в `routes/api.php`
+5. Напишите тесты
+
+## API Документация
+
+### Аутентификация
+
+API использует Laravel Sanctum для аутентификации:
+
+```bash
+# Получение токена
+POST /api/login
+{
+  "email": "user@example.com",
+  "password": "password"
+}
+
+# Использование токена
+Authorization: Bearer {token}
+```
+
+### Примеры запросов
+
+```bash
+# Получение всех статей
+curl -H "Accept: application/json" \
+     http://localhost:9000/api/articles
+
+# Создание статьи
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer {token}" \
+     -d '{"title":"Новая статья","content":"Содержимое"}' \
+     http://localhost:9000/api/articles
+```
+
+## Требования
+
+- PHP 8.2+
+- Composer
+- PostgreSQL 15+
+- Docker (опционально)
+
+## Лицензия
+
+MIT

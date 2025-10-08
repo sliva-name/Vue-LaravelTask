@@ -2,27 +2,24 @@ version: "3.8"
 
 services:
   app:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ${BACKEND_IMAGE:-tekstura-backend:latest}
     container_name: laravel_app
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "9000:9000"       # используется artisan serve в dev
+      - "9000:9000"
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres_db
       DB_PORT: 5432
       DB_DATABASE: articles_db
       DB_USERNAME: laravel
-      DB_PASSWORD: secret
-      APP_ENV: local
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      APP_ENV: ${APP_ENV:-local}
       APP_DEBUG: "true"
     volumes:
-      - ./backend:/var/www/html:cached
-      - ./backend/vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage
     networks:
       - app-network
     healthcheck:
@@ -40,7 +37,7 @@ services:
     environment:
       POSTGRES_DB: articles_db
       POSTGRES_USER: laravel
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -52,24 +49,15 @@ services:
       retries: 10
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ${FRONTEND_IMAGE:-tekstura-frontend:latest}
     container_name: nuxt_frontend
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${NODE_ENV:-development}
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
-      VITE_HMR_HOST: localhost
-      VITE_HMR_PORT: 5173
-      API_BASE_URL_CLIENT: /api           # для public.apiBase (браузер)
-      SERVER_API_BASE: http://laravel_app:9000/api  # для server-side fetch
-      NODE_OPTIONS: "--max-old-space-size=4096"
-    volumes:
-      - ./frontend:/app:cached
-      - /app/node_modules
+      API_BASE_URL: http://laravel_app:9000/api
     depends_on:
       - app
     networks:
@@ -90,6 +78,7 @@ services:
 
 volumes:
   db_data:
+  app_storage:
 
 networks:
   app-network:
